@@ -10,21 +10,19 @@ import datetime
 import threading
 import atexit
 
-ROVECOMM_ADDRESS_BASE = "192.168.1."
-
 #Add addresses to sniff here
 board_addresses = {
-		"OPEN" :"130",
-		"ARM" :"131",
-		"POWER" :"132",
-		"BMS" :"133",
-		"DRIVE" :"134",
-		"LIGHTINGSHIMBLE" :"135",
-		"NAVCAMERA" :"136",
-		"SRAACTUATION" :"137",
-		"SRASENSORS" :"138",
-		"AUTONOMY" :"139",
-		"SHIMBLENAV" :"140"
+		"OPEN"            :"192.168.1.130",
+		"ARM"             :"192.168.1.131",
+		"POWER"           :"192.168.1.132",
+		"BMS"             :"192.168.1.133",
+		"DRIVE"           :"192.168.1.134",
+		"LIGHTINGSHIMBLE" :"192.168.1.135",
+		"NAVCAMERA"       :"192.168.1.136",
+		"SRAACTUATION"    :"192.168.1.137",
+		"SRASENSORS"      :"192.168.1.138",
+		"AUTONOMY"        :"192.168.1.139",
+		"SHIMBLENAV"      :"192.168.1.140",
 }
 
 startup_time = datetime.datetime.now()
@@ -53,9 +51,9 @@ def subscribeAll():
 		subscribe_thread.start()
 	
 class BoardFile():
-	def __init__(self, board_name, ip_octet_4, port=ROVECOMM_PORT):
+	def __init__(self, board_name, ip_address, port=ROVECOMM_PORT):
 		self.board_name = board_name
-		self.ip_address = (ROVECOMM_ADDRESS_BASE + ip_octet_4, port)
+		self.ip_address = (ip_address, port)
 		self.file_name = str(self.ip_address) + "_" + self.board_name + ".txt"
 		self.file = open(self.file_name, "w+")
 		self.file.write("Number, Timestamp, Delta, ID, Count, Type, Data\n")
@@ -73,11 +71,17 @@ class BoardFile():
 		if (packet.ip_address == self.ip_address):
 			now = datetime.datetime.now()
 			delta = now-self.start_time
-			self.file = open(file_name, 'a')
-			self.file.write(count, str(now), str(delta), packet.data_id, packet.data_count, packet.data_type, packet.data, +"\n")
+			self.file = open(self.file_name, 'a')
+			self.file.write(str(self.count) + "," + 
+							str(now) + "," + 
+							str(delta) + "," + 
+							str(packet.data_id) + "," + 
+							str(packet.data_count) + "," + 
+							str(packet.data_type) + "," + 
+							str(packet.data) + "\n")
 			self.file.close()
 			
-			self.count = count+1
+			self.count = self.count+1
 	
 for x in board_addresses:
 	boards.append(BoardFile(x, board_addresses[x]))
@@ -87,6 +91,7 @@ subscribeAll()
 while(1):
 	packet = RoveComm.read()
 	if(packet.data_id != 0):
+		packet.print()
 		for board in boards:
 			board.parsePacket(packet)
 		
