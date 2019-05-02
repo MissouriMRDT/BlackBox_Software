@@ -107,10 +107,13 @@ for x in board_addresses:
 	
 subscribeAll()
 
+new_boards = 0;
+
 while(1):
 	packet = RoveComm.read()
 	if(packet.ip_address not in [a.ip_address for a in boards]):
-		
+		new_boards + new_boards + 1
+		boards.append(BoardFile("Board-" + str(new_boards), packet.ip_address))
 	if(packet.data_id != 0):
 		packet.print()
 		for board in boards:
