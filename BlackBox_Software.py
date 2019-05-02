@@ -31,9 +31,9 @@ try:
 except:
 	pass
 	
-folder_path = "0-DataLog/" + str(startup_time).replace(':', '_')
-os.mkdir(folder_path)
-os.chdir(folder_path)
+instance_folder_path = "0-DataLog/" + str(startup_time).replace(':', '_')
+os.mkdir(instance_folder_path)
+os.chdir(instance_folder_path)
 
 RoveComm = RoveCommEthernetUdp()
 do_thread = True
@@ -46,32 +46,24 @@ def subscribeAll():
 	for board in boards:
 		board.subscribe()
 	if(do_thread):
-		subscribe_thread = threading.Timer(1, subscribeAll)
+		subscribe_thread = threading.Timer(5, subscribeAll)
 		subscribe_thread.daemon = True
 		subscribe_thread.start()
 	
-class BoardFile():
-	def __init__(self, board_name, ip_address, port=ROVECOMM_PORT):
-		self.board_name = board_name
-		self.ip_address = (ip_address, port)
-		self.file_name = str(self.ip_address) + "_" + self.board_name + ".txt"
-		self.file = open(self.file_name, "w+")
-		self.file.write("Number, Timestamp, Delta, ID, Count, Type, Data\n")
-		self.file.close()
+class IdFile()
+	def __init(self, data_id, self.start_time):
+		self.data_id = data_id
+		self.file_path = start_time + str(data_id) + ".txt"
 		
-		self.start_time = datetime.datetime.now()
-		self.count = 0
-			
-	def subscribe(self):
-		packet = RoveCommPacket(ROVECOMM_SUBSCRIBE_REQUEST)
-		packet.SetIp(self.ip_address)
-		RoveComm.write(packet)
+		self.file = open(self.file_path, 'w+')
+		self.file.write("Count,Time,Delta,Data ID, Data Count,Data Type, Data)")
+	    self.file.close()
 		
-	def parsePacket(self, packet):
-		if (packet.ip_address == self.ip_address):
+	def writeFile(self, packet)
+		if(packet.data_id = self.data_id):
 			now = datetime.datetime.now()
-			delta = now-self.start_time
-			self.file = open(self.file_name, 'a')
+			delta = now-startup_time
+			self.file = open(self.file_path, 'a')
 			self.file.write(str(self.count) + "," + 
 							str(now) + "," + 
 							str(delta) + "," + 
@@ -82,6 +74,33 @@ class BoardFile():
 			self.file.close()
 			
 			self.count = self.count+1
+		
+	
+class BoardFolder():
+	def __init__(self, board_name, ip_address, port=ROVECOMM_PORT):
+		self.board_name = board_name
+		self.ip_address = (ip_address, port)
+		
+		self.board_dir = str(self.ip_address) + "_" + self.board_name + ".txt"
+		
+		os.mkdir(self.board_dir)
+		
+		self.id_files = []
+		
+		self.count = 0
+			
+	def subscribe(self):
+		packet = RoveCommPacket(ROVECOMM_SUBSCRIBE_REQUEST)
+		packet.SetIp(self.ip_address)
+		RoveComm.write(packet)
+		
+	def parsePacket(self, packet):
+		if (packet.ip_address == self.ip_address):
+			if(packet.data_id not in [a.data_id for a in self.id_files]):
+				self.id_files.append(IdFile(packet.data_id, self.board_dir))
+			for id in self.id_files:
+				id.writeFile(packet)
+			
 	
 for x in board_addresses:
 	boards.append(BoardFile(x, board_addresses[x]))
@@ -90,6 +109,8 @@ subscribeAll()
 
 while(1):
 	packet = RoveComm.read()
+	if(packet.ip_address not in [a.ip_address for a in boards]):
+		
 	if(packet.data_id != 0):
 		packet.print()
 		for board in boards:

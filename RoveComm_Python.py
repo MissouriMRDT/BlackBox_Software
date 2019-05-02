@@ -74,10 +74,10 @@ class RoveCommEthernetUdp:
 			for i in packet.data:
 				rovecomm_packet = rovecomm_packet + struct.pack('>' + packet.data_type, i)
 
-			for subscriber in self.subscribers:
-				self.RoveCommSocket.sendto(rovecomm_packet, (subscriber))
-
-			if (packet.ip_address != ('0.0.0.0', 0)):
+			if (packet.ip_address == ('0.0.0.0', 0)):
+				for subscriber in self.subscribers:
+					self.RoveCommSocket.sendto(rovecomm_packet, (subscriber))
+			elif (packet.ip_address != ('0.0.0.0', 0)):
 				self.RoveCommSocket.sendto(rovecomm_packet, packet.ip_address)
 				return 1
 		except:
