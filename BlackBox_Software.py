@@ -10,7 +10,7 @@ import datetime
 import threading
 import atexit
 
-#Add addresses to sniff here
+#Add addresses to define and subscribe to here
 board_addresses = {
 		"OPEN"            :"192.168.1.130",
 		"ARM"             :"192.168.1.131",
@@ -22,7 +22,7 @@ board_addresses = {
 		"SRAACTUATION"    :"192.168.1.137",
 		"SRASENSORS"      :"192.168.1.138",
 		"AUTONOMY"        :"192.168.1.139",
-		"SHIMBLENAV"      :"192.168.1.140",
+		#"SHIMBLENAV"      :"192.168.1.140",
 }
 
 startup_time = datetime.datetime.now()
@@ -50,17 +50,17 @@ def subscribeAll():
 		subscribe_thread.daemon = True
 		subscribe_thread.start()
 	
-class IdFile()
-	def __init(self, data_id, self.start_time):
+class IdFile():
+	def __init(self, data_id):
 		self.data_id = data_id
 		self.file_path = start_time + str(data_id) + ".txt"
 		
 		self.file = open(self.file_path, 'w+')
 		self.file.write("Count,Time,Delta,Data ID, Data Count,Data Type, Data)")
-	    self.file.close()
+		self.file.close()
 		
-	def writeFile(self, packet)
-		if(packet.data_id = self.data_id):
+	def writeFile(self, packet):
+		if(packet.data_id == self.data_id):
 			now = datetime.datetime.now()
 			delta = now-startup_time
 			self.file = open(self.file_path, 'a')
@@ -81,7 +81,7 @@ class BoardFolder():
 		self.board_name = board_name
 		self.ip_address = (ip_address, port)
 		
-		self.board_dir = str(self.ip_address) + "_" + self.board_name + ".txt"
+		self.board_dir = str(self.ip_address) + "_" + self.board_name
 		
 		os.mkdir(self.board_dir)
 		
@@ -103,7 +103,7 @@ class BoardFolder():
 			
 	
 for x in board_addresses:
-	boards.append(BoardFile(x, board_addresses[x]))
+	boards.append(BoardFolder(x, board_addresses[x]))
 	
 subscribeAll()
 
@@ -111,15 +111,14 @@ new_boards = 0;
 
 while(1):
 	packet = RoveComm.read()
-	if(packet.ip_address not in [a.ip_address for a in boards]):
-		new_boards + new_boards + 1
-		boards.append(BoardFile("Board-" + str(new_boards), packet.ip_address))
-	if(packet.data_id != 0):
+	if (packet.data_id != 0):
+		if(packet.ip_address not in [a.ip_address for a in boards]):
+			new_boards = new_boards + 1
+			boards.append(BoardFolder("Board-" + str(new_boards), packet.ip_address[0]))
 		packet.print()
 		for board in boards:
 			board.parsePacket(packet)
-		
-	
+
 
 
 
