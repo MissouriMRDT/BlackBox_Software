@@ -56,7 +56,7 @@ class IdFile():
 		self.file_name = board_address +"/"+ str(data_id) + ".txt"
 		
 		self.file = open(self.file_name, 'w+')
-		self.file.write("Count,Time,Delta,Data ID, Data Count,Data Type, Data)")
+		self.file.write("Count,Time,Delta,Data ID, Data Count,Data Type, Data\n")
 		self.count = 0
 		self.file.close()
 		
