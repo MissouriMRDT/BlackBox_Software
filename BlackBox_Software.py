@@ -51,19 +51,20 @@ def subscribeAll():
 		subscribe_thread.start()
 	
 class IdFile():
-	def __init(self, data_id):
+	def __init__(self, data_id, board_address):
 		self.data_id = data_id
-		self.file_path = start_time + str(data_id) + ".txt"
+		self.file_name = board_address +"/"+ str(data_id) + ".txt"
 		
-		self.file = open(self.file_path, 'w+')
+		self.file = open(self.file_name, 'w+')
 		self.file.write("Count,Time,Delta,Data ID, Data Count,Data Type, Data)")
+		self.count = 0
 		self.file.close()
 		
 	def writeFile(self, packet):
 		if(packet.data_id == self.data_id):
 			now = datetime.datetime.now()
 			delta = now-startup_time
-			self.file = open(self.file_path, 'a')
+			self.file = open(self.file_name, 'a')
 			self.file.write(str(self.count) + "," + 
 							str(now) + "," + 
 							str(delta) + "," + 
