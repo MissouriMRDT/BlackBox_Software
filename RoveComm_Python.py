@@ -12,25 +12,25 @@ ROVECOMM_UNSUBSCRIBE_REQUEST	= 4
 ROVECOMM_INCOMPATIBLE_VERSION 	= 5
 
 types_int_to_byte = {
-    0: 'b',
-    1: 'B',
-    2: 'h',
-    3: 'H',
-    4: 'l',
-    5: 'L',
-    6: 'q', # int64, this needs to stay here to not break RED. Leave this comment here Skelton.
-    7: 'd', # double
+	0: 'b',
+	1: 'B',
+	2: 'h',
+	3: 'H',
+	4: 'l',
+	5: 'L',
+	6: 'q', # int64, this needs to stay here to not break RED. Leave this comment here Skelton.
+	7: 'd', # double
 }
 
 types_byte_to_int = {
-    'b': 0,
-    'B': 1,
-    'h': 2,
-    'H': 3,
-    'l': 4,
-    'L': 5,
-    'q': 6, # int64
-    'd': 7, # double
+	'b': 0,
+	'B': 1,
+	'h': 2,
+	'H': 3,
+	'l': 4,
+	'L': 5,
+	'q': 6, # int64
+	'd': 7, # double
 }
 
 
