@@ -80,7 +80,7 @@ class IdFile():
 class BoardFolder():
 	def __init__(self, board_name, ip_address, port=ROVECOMM_PORT):
 		self.board_name = board_name
-		self.ip_address = (ip_address, port)
+		self.ip_address = ip_address
 		
 		self.board_dir = str(self.ip_address) + "_" + self.board_name
 		
@@ -92,6 +92,7 @@ class BoardFolder():
 			
 	def subscribe(self):
 		packet = RoveCommPacket(ROVECOMM_SUBSCRIBE_REQUEST)
+		packet.data_id = 3
 		packet.SetIp(self.ip_address)
 		RoveComm.write(packet)
 		
