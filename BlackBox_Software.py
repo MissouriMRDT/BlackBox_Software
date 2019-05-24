@@ -31,7 +31,21 @@ try:
 except:
 	pass
 	
-instance_folder_path = "0-DataLog/" + str(startup_time).replace(':', '_')
+
+try:
+	sequence_store = open("sequence.txt", "r")
+	sequence_num = int(sequence_store.read())
+	sequence_store.close()
+	sequence_store = open("sequence.txt", "w")
+	sequence_store.write(str(sequence_num+1))
+	sequence_store.close()
+except:
+	sequence_store = open("sequence.txt", "w+")
+	sequence_num = 0
+	sequence_store.write(str(sequence_num+1))
+	sequence_store.close()
+	
+instance_folder_path = "0-DataLog/" + str(sequence_num) + "-" + str(startup_time).replace(':', '_')
 os.mkdir(instance_folder_path)
 os.chdir(instance_folder_path)
 
