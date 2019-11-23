@@ -111,7 +111,7 @@ class BoardFolder():
 		RoveComm.write(packet)
 		
 	def parsePacket(self, packet):
-		if (packet.ip_address == self.ip_address):
+		if (packet.ip_address[0] == self.ip_address):
 			if(packet.data_id not in [a.data_id for a in self.id_files]):
 				self.id_files.append(IdFile(packet.data_id, self.board_dir))
 			for id in self.id_files:
@@ -128,14 +128,9 @@ new_boards = 0;
 while(1):
 	packet = RoveComm.read()
 	if (packet.data_id != 0):
-		if(packet.ip_address not in [a.ip_address for a in boards]):
+		if(packet.ip_address[0] not in [a.ip_address for a in boards]):
 			new_boards = new_boards + 1
 			boards.append(BoardFolder("Board-" + str(new_boards), packet.ip_address[0]))
-		packet.print()
+		#packet.print()
 		for board in boards:
 			board.parsePacket(packet)
-
-
-
-
-
